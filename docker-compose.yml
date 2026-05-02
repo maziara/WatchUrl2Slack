@@ -1,9 +1,9 @@
-version: "3.7"
-
 services:
 
   app:
     build: ./
     volumes:
       - .:/home
+    environment:
+      - PIPENV_DONT_LOAD_ENV=1
     command: "pipenv run python Look4StringInUrl.py"
