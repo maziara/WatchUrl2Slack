@@ -1,4 +1,5 @@
 import urllib.request, os
+from datetime import datetime
 from bs4 import BeautifulSoup
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -21,7 +22,7 @@ def sendSlackMessage(msg):
         )
   except SlackApiError as e:
       # You will get a SlackApiError if "ok" is False
-      print(e.response)    # str like 'invalid_auth', 'channel_not_found'
+      print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), e.response)
 
 def writeFlag():
    open(flagFile, 'a').close()
@@ -46,12 +47,16 @@ for l in links:
 
 if len(foundLinks) > 0:
   if not flagged():
+    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ourString, ": string found !!!")
     sendSlackMessage(ourString + " : string found !!!")
     for l in foundLinks:
+      print(f"  - {l.get_text(strip=True) or l.get('href')} ({l.get('href')})")
+      print(f"    {l}")
       sendSlackMessage(str(l))
     writeFlag()
 else:
   if flagged():
+    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), ourString, ": string removed.")
     sendSlackMessage(ourString + " : string removed. Will notify again if found.")
     removeFlag()
 
